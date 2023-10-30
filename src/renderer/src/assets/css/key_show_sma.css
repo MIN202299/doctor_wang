@@ -1,0 +1,17 @@
+#key_sma{
+    /* background-image: url('key_show_sma.png');s */
+    background-size: cover; /* 或者使用 contain，根据需要选择 */
+    position: absolute;
+    display: flex;
+    /* justify-content: center; */
+    align-items: center;
+    background-color: transparent; /* 将按钮背景颜色设置为透明 */
+    background-repeat: no-repeat; /* 禁止背景图片重复 */
+    width: 42px; /* 设置按钮的宽度 */
+    height: 42px; /* 设置按钮的高度 */
+    border: none; /* 去掉按钮边框 */
+    transition: all 0.4s ease; /* 添加过渡效果，使样式改变更平滑 */
+    z-index: 1;
+    background-image: url('../public/key_show_sma.png');
+}
+    

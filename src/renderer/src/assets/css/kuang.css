@@ -1,0 +1,29 @@
+
+#kuang1 {
+    position: absolute;
+    top: 23%;
+    left: 17.3%;
+    z-index: 2;
+    clip-path: polygon(8% 0%, 100% 0%, 100% 90%, 92% 100%, 0% 100%, 0% 10%);
+}
+
+#kuang2 {
+    position: absolute;
+    top: 56.4%;
+    left: 8%;
+    z-index: 2;
+    clip-path: polygon(8% 0%, 100% 0%, 100% 90%, 92% 100%, 0% 100%, 0% 10%);
+    backdrop-filter: blur(10px);
+}
+
+#kuang3 {
+    position: fixed;
+    top: 68.4%;
+    left: 55%;
+    width: 786px;
+    height: 464px;
+    z-index: 3;
+    clip-path: polygon(8% 0%, 100% 0%, 100% 90%, 92% 100%, 0% 100%, 0% 10%);
+    backdrop-filter: blur(3px);
+    transition: transform 1s;
+}
