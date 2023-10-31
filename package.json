@@ -21,12 +21,8 @@
     "@electron-toolkit/utils": "^2.0.0",
     "@vueuse/head": "^2.0.0",
     "axios": "^1.5.1",
-    "electron-sudo": "^4.0.12",
     "electron-updater": "^6.1.4",
     "jquery": "^3.7.1",
-    "simple-keyboard": "^3.7.22",
-    "simple-keyboard-layouts": "^3.3.29",
-    "sudo-prompt": "^9.2.1",
     "vue-meta": "^2.4.0",
     "vue-router": "^4.2.5"
   },
