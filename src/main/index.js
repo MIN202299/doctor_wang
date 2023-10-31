@@ -1,8 +1,12 @@
-import { app, shell, BrowserWindow, screen, ipcMain } from 'electron'
-import { join } from 'path'
-import { electronApp, optimizer, is } from '@electron-toolkit/utils'
+import path, { join } from 'node:path'
+import process from 'node:process'
+import childProcess from 'node:child_process'
+import { BrowserWindow, app, ipcMain, screen, shell } from 'electron'
+import { electronApp, is, optimizer } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 
+const isDev = process.env.NODE_ENV === 'development'
+const cwd = isDev ? path.resolve(__dirname, '../../resources/scripts/') : path.resolve(app.getAppPath(), '../scripts/')
 function createWindow() {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
@@ -16,10 +20,10 @@ function createWindow() {
       preload: join(__dirname, '../preload/index.js'),
       sandbox: false,
       nodeIntegration: true,
-      contextIsolation: false
-    }
+      contextIsolation: false,
+    },
   })
-  mainWindow.webContents.toggleDevTools()
+  isDev && mainWindow.webContents.toggleDevTools()
   mainWindow.on('ready-to-show', () => {
     mainWindow.show()
   })
@@ -47,8 +51,8 @@ function createWindow() {
         preload: join(__dirname, '../preload/index.js'),
         nodeIntegration: true,
         contextIsolation: false,
-        sandbox: false
-      }
+        sandbox: false,
+      },
     })
     otherWindow.on('closed', () => {
       otherWindow = null
@@ -57,30 +61,81 @@ function createWindow() {
   otherWindow.on('ready-to-show', () => {
     otherWindow.show()
   })
-  otherWindow.webContents.toggleDevTools()
-  //double screen communte
+  isDev && otherWindow.webContents.toggleDevTools()
+  // double screen communte
   ipcMain.on('data_get', (_, message) => {
     if (mainWindow) {
-      console.log('datais com' + message)
+      console.log(`datais com${message}`)
       otherWindow.webContents.send('data_is_com', message)
     }
   })
   ipcMain.on('button_is_clicked', (_, message) => {
     if (mainWindow) {
-      console.log('isclick' + message)
+      console.log(`is clicked ${message}`)
       otherWindow.webContents.send('isclick', message)
     }
   })
 
+  ipcMain.on('open-original-keyboard', () => {
+    console.log('open')
+    childProcess.exec('start osk.exe', { cwd }, (err) => {
+      console.log(err)
+    })
+  })
+  ipcMain.on('close-original-keyboard', () => {
+    console.log('close')
+    // 关闭屏幕键盘需要管理员权限
+    // 没有管理员权限无法正常执行
+    childProcess.exec('taskkill /f /im osk.exe', { cwd }, (err) => {
+      console.log(err)
+    })
+  })
+
   // HMR for renderer base on electron-vite cli.
   // Load the remote URL for development or the local html file for production.
-  if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
-    mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL'])
+  if (is.dev && process.env.ELECTRON_RENDERER_URL) {
+    mainWindow.loadURL(process.env.ELECTRON_RENDERER_URL)
     otherWindow.loadURL(`${root}/#/page2`)
-  } else {
+  }
+  else {
     mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
     otherWindow.loadFile(join(__dirname, '../renderer/index.html'), {
-      hash: 'page2'
+      hash: 'page2',
+    })
+  }
+  // fix cors error
+  mainWindow.webContents.session.webRequest.onBeforeSendHeaders((details, cb) => {
+    console.log('mainWindow', details)
+    cb({
+      requestHeaders: { Origin: '*', ...details.requestHeaders },
+    })
+  })
+  mainWindow.webContents.session.webRequest.onHeadersReceived((details, cb) => {
+    console.log('mainWindow', details)
+    cb({
+      responseHeaders: {
+        'Access-Control-Allow-Origin': ['*'],
+        // We use this to bypass headers
+        'Access-Control-Allow-Headers': ['*'],
+        ...details.responseHeaders,
+      },
+    })
+  })
+  if (otherWindow) {
+    otherWindow.webContents.session.webRequest.onBeforeSendHeaders((details, cb) => {
+      cb({
+        requestHeaders: { Origin: '*', ...details.requestHeaders },
+      })
+    })
+    otherWindow.webContents.session.webRequest.onHeadersReceived((details, cb) => {
+      cb({
+        responseHeaders: {
+          'Access-Control-Allow-Origin': ['*'],
+          // We use this to bypass headers
+          'Access-Control-Allow-Headers': ['*'],
+          ...details.responseHeaders,
+        },
+      })
     })
   }
 }
@@ -101,10 +156,11 @@ app.whenReady().then(() => {
 
   createWindow()
 
-  app.on('activate', function () {
+  app.on('activate', () => {
     // On macOS it's common to re-create a window in the app when the
     // dock icon is clicked and there are no other windows open.
-    if (BrowserWindow.getAllWindows().length === 0) createWindow()
+    if (BrowserWindow.getAllWindows().length === 0)
+      createWindow()
   })
 })
 
@@ -112,9 +168,8 @@ app.whenReady().then(() => {
 // for applications and their menu bar to stay active until the user quits
 // explicitly with Cmd + Q.
 app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
+  if (process.platform !== 'darwin')
     app.quit()
-  }
 })
 
 // In this file you can include the rest of your app"s specific main process

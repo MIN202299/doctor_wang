@@ -2,8 +2,9 @@
 
 // import sendPostRequest from '../request_api/request_api.js'
 
-var axios = require('axios')
+const axios = require('axios')
 const { ipcRenderer } = require('electron')
+
 const buttons = document.querySelectorAll('.transparent-button')
 const text_in = document.getElementById('text_get')
 const page1 = document.getElementById('page1')
@@ -16,7 +17,7 @@ const page3 = document.getElementById('page3')
 // var bouth_val
 
 buttons.forEach((button) => {
-  button.addEventListener('mouseover', function () {
+  button.addEventListener('mouseover', () => {
     buttons.forEach((btn) => {
       btn.classList.remove('selected')
       btn.classList.add('blur-text')
@@ -24,7 +25,7 @@ buttons.forEach((button) => {
     button.classList.add('selected')
     button.classList.remove('blur-text')
   })
-  button.addEventListener('mouseout', function () {
+  button.addEventListener('mouseout', () => {
     buttons.forEach((btn) => {
       btn.classList.remove('selected')
       btn.classList.remove('blur-text')
@@ -33,24 +34,19 @@ buttons.forEach((button) => {
   button.addEventListener('click', () => {
     const buttonText = button.textContent
     console.log(`Button ${buttonText} Clicked`)
-    //����API����
     sendPostRequest(buttonText)
   })
 })
 
 text_in.addEventListener('click', () => {
-  // ������ť���ֺ���Ч��
-  // ����������л���ť����ʽ�����?/���ذ�ť
-  // �л�ҳ�����������������Ч��??
   page1.classList.add('hidden')
   page2.style.transform = 'translateY(-560px)'
   sma_img.style.transform = 'translateY(15px)'
   page3.classList.add('visible')
-  // ���������??
 })
 document.addEventListener('click', (event) => {
-  const mouseX = event.clientX // ��ȡ�����λ�õ�X����
-  const mouseY = event.clientY // ��ȡ�����λ�õ�Y����
+  const mouseX = event.clientX
+  const mouseY = event.clientY
 
   if (mouseX <= 400 || mouseX >= 1500 || mouseY <= 100 || mouseY >= 900) {
     page2.style.transform = 'translateY(0)'
@@ -62,22 +58,22 @@ document.addEventListener('click', (event) => {
 })
 
 function sendPostRequest(data_in) {
-  const params = new URLSearchParams() // ????????
-  params.append('id', 23) // ???????
-  params.append('content', data_in) // ???????
-  params.append('user_id', 6) // ???????
-  var config = {
+  const params = new URLSearchParams()
+  params.append('id', 23)
+  params.append('content', data_in)
+  params.append('user_id', 6)
+  const config = {
     method: 'POST',
     url: 'http://api.mpw.ai:9023/api/chat/completiontest',
     headers: {
-      'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8'
-      //   ...data.getHeaders()
+      'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
+
     },
-    data: params
+    data: params,
   }
   console.log(params)
   axios(config)
-    .then(function (response) {
+    .then((response) => {
       const data_get = JSON.stringify(response.data)
       console.log(data_get)
       const startIndex = data_get.indexOf('reply')
@@ -85,7 +81,7 @@ function sendPostRequest(data_in) {
       const extractedText = data_get.substring(startIndex, endIndex)
       ipcRenderer.send('button-clicked', extractedText)
     })
-    .catch(function (error) {
+    .catch((error) => {
       console.log(error)
     })
 }

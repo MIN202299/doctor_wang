@@ -1,84 +1,7 @@
-<script setup></script>
-
-<template>
-  <div class="page">
-    <div id="page1" ref="page1" class="page-content">
-      <button
-        id="mybutton0"
-        class="transparent-button"
-        style="top: 284px; left: 430px; padding-left: 50px"
-      >
-        请帮我制定一份劳动合同?
-      </button>
-      <button
-        id="mybutton1"
-        class="transparent-button"
-        style="top: 370px; left: 430px; padding-left: 50px"
-      >
-        请帮我写一张元旦请假条?
-      </button>
-      <button
-        id="mybutton2"
-        class="transparent-button"
-        style="top: 456px; left: 430px; padding-left: 50px"
-      >
-        请帮我草拟一份律师函?
-      </button>
-      <button
-        id="mybutton3"
-        class="transparent-button"
-        style="top: 542px; left: 430px; padding-left: 50px"
-      >
-        请帮我写一份2024年元旦放假通知?
-      </button>
-      <button
-        id="mybutton4"
-        class="transparent-button"
-        style="top: 628px; left: 430px; padding-left: 50px"
-      >
-        请帮我制定一份杭州滨江区扶持AIGC生成式人工智能创新创业公司的政策?
-      </button>
-      <button
-        id="mybutton5"
-        class="transparent-button"
-        style="top: 714px; left: 430px; padding-left: 50px"
-      >
-        请将古诗《静夜思》的情景扩写成一篇短的英文科幻故事?
-      </button>
-    </div>
-    <div id="page2" ref="page2" class="page2-content">
-      <input
-        id="text_get"
-        ref="text_in"
-        v-model="inputValue"
-        class="text-input"
-        style="top: 800px; left: 430px"
-        placeholder="请输入你的问题。"
-        @input="handleInput"
-      />
-      <button
-        id="text_send"
-        ref="test_send_button"
-        class="text_send_button"
-        style="top: 810px; left: 1280px"
-      ></button>
-      <button class="key_buttton" style="top: 800px; left: 1370px"></button>
-      <div id="key_sma0" ref="sma_img" class="key_sma" style="top: 815px; left: 1412px"></div>
-    </div>
-    <div id="page3" ref="page3">
-      <div class="simple-keyboard" />
-    </div>
-  </div>
-</template>
-
 <script>
-import Keyboard from 'simple-keyboard'
-import 'simple-keyboard/build/css/index.css'
-import layout from 'simple-keyboard-layouts/build/layouts/chinese' // 中文输入法
-
 import axios from 'axios'
+
 export default {
-  // 组件的相关选项
   data() {
     return {
       text_in: null,
@@ -88,105 +11,42 @@ export default {
       page3: null,
       test_send_button: null,
       inputValue: '',
-      keyboard: null
+      keyboard: null,
+      hovered: -1, // 被选中按钮的索引
+      isFocus: false, // 输入模式
     }
   },
-  mounted() {
-    const buttons = document.querySelectorAll('.transparent-button')
-    // const text_in = document.getElementById('text_get')
-    // const page1 = document.getElementById('page1')
-    // const page2 = document.getElementById('page2')
-    // const sma_img = document.getElementById('key_sma0')
-    // const page3 = document.getElementById('page3')
-    // const test_send_button = document.getElementById('text_send')
-
-    // 添加事件监听�?
-    buttons.forEach((button) => {
-      button.addEventListener('mouseover', function () {
-        buttons.forEach((btn) => {
-          btn.classList.remove('selected')
-          btn.classList.add('blur-text')
-        })
-        button.classList.add('selected')
-        button.classList.remove('blur-text')
-      })
-      button.addEventListener('mouseout', function () {
-        buttons.forEach((btn) => {
-          btn.classList.remove('selected')
-          btn.classList.remove('blur-text')
-        })
-      })
-      button.addEventListener('click', () => {
-        const buttonText = button.textContent
-        console.log(`Button ${buttonText} Clicked`)
-        window.api.sendButtonText(buttonText)
-        // 调用发送API请求的方法s
-        this.sendPostRequest(buttonText)
-      })
-    })
-    this.$refs.text_in.addEventListener('click', this.onTextClick)
-    window.addEventListener('click', this.onWindowClick)
-    this.$refs.test_send_button.addEventListener('click', this.onTestSendButton)
-    this.keyboard = new Keyboard({
-      onChange: input => this.onChange(input),
-      onKeyPress: button => this.onKeyPress(button),
-      ...layout
-    })
-  },
-  beforeUnmount() {
-    window.removeEventListener('click', this.onWindowClick)
-    this.$refs.text_in.removeEventListener('click', this.onTextClick)
-    this.$refs.test_send_button.removeEventListener('click', this.onTestSendButton)
+  watch: {
+    isFocus(val) {
+      val ? window.api.openKeyboard() : window.api.closeKeyboard()
+    },
   },
   methods: {
-    // 组件的方�?
-    onTextClick(e) {
-      this.$refs.page1.classList.add('hidden')
-      this.$refs.test_send_button.style.pointerEvents = 'auto'
-      this.$refs.test_send_button.style.opacity = '1' // 不透明度�?�置�?1
-      this.$refs.page2.style.transform = 'translateY(-560px)'
-      this.$refs.sma_img.style.transform = 'translateY(15px)'
-      this.$refs.page3.classList.add('visible')
-      e.stopPropagation()
-    },
-    onWindowClick(event) {
-      const mouseX = event.clientX // 锟斤拷取锟斤拷锟斤拷锟轿伙拷�?锟絏锟斤拷锟斤拷
-      const mouseY = event.clientY // 锟斤拷取锟斤拷锟斤拷锟轿伙拷�?锟結锟斤拷锟斤拷
-
-      if (mouseX <= 400 || mouseX >= 1500 || mouseY <= 100 || mouseY >= 900) {
-        this.$refs.page2.style.transform = 'translateY(0)'
-        this.$refs.page2.style.transform = 'translateX(0)'
-        this.$refs.page1.classList.remove('hidden')
-        this.$refs.test_send_button.style.pointerEvents = 'none'
-        this.$refs.test_send_button.style.opacity = '0' // 不透明度�?�置�?1
-        this.$refs.sma_img.style.transform = 'translateY(0)'
-        this.$refs.page3.classList.remove('visible')
-        // fix bug
-      }
-    },
     onTestSendButton() {
-      console.log(this.$refs.text_in.value)
-      //send text to wang
+      console.log('onTestSendButton', this.$refs.text_in.value)
+      this.timer && clearTimeout(this.timer)
+      // send text to wang
       window.api.sendButtonText(this.$refs.text_in.value)
       this.sendPostRequest(this.$refs.text_in.value)
-      this.$refs.text_in.value = ''
+      this.$refs.text_in.focus()
     },
     sendPostRequest(data_in) {
       const params = new URLSearchParams()
       params.append('id', 23)
       params.append('content', data_in)
       params.append('user_id', 6)
-      var config = {
-        method: 'POST',
+      const config = {
         url: 'http://api.mpw.ai:9023/api/chat/completiontest',
+        method: 'POST',
         headers: {
-          'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8'
+          'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
         },
-        data: params
+        data: params,
       }
-      console.log(params)
+      // console.log(params)
       axios(config)
-        .then(function (response) {
+        .then((response) => {
+          console.log(response)
           const data_get = JSON.stringify(response.data)
           console.log(data_get)
           const startIndex = data_get.indexOf('reply')
@@ -194,33 +54,126 @@ export default {
           const extractedText = data_get.substring(startIndex, endIndex)
           window.api.onDataGet(extractedText)
         })
-        .catch(function (error) {
+        .catch((error) => {
           console.log(error)
         })
     },
-    onChange(input) {
-      this.inputValue = input
-      // console.log('Input changed', input)
+    onButtonClick(e) {
+      const buttonText = e.currentTarget.textContent
+      console.log(`Button ${buttonText} Clicked`)
+      window.api.sendButtonText(buttonText)
+      // 调用发送API请求的方法
+      this.sendPostRequest(buttonText)
     },
-    onKeyPress(button) {
-      // console.log('Button pressed', button)
-      if (button === '{shift}' || button === '{lock}') this.handleShift()
+    // fix 不触发onTestSendButton
+    test() {
+      this.timer = setTimeout(() => {
+        this.isFocus = false
+        this.$refs.text_in.value = ''
+      }, 300)
     },
-    // 切换shift/默认布局
-    handleShift() {
-      let currentLayout = this.keyboard.options.layoutName
-      let shiftToggle = currentLayout === 'default' ? 'shift' : 'default'
-
-      this.keyboard.setOptions({
-        layoutName: shiftToggle
-      })
+    showKeyBoard() {
+      this.timer && clearTimeout(this.timer)
+      this.$refs.text_in.focus()
+      this.isFocus = true
     },
-    handleInput(event) {
-      this.keyboard.setInput(event.target.value)
-    }
-  }
+  },
 }
 </script>
+
+<template>
+  <div class="page">
+    <div id="page1" class="page-content" :class="isFocus ? 'is-hidden' : ''">
+      <!-- todo use v-for -->
+      <button
+        id="mybutton0"
+        class="transparent-button"
+        style="top: 284px; left: 430px; padding-left: 50px"
+        :class="hovered === 0 ? 'selected' : 'blur-text'"
+        @mouseover="hovered = 0"
+        @mouseout="hovered = -1"
+        @click="onButtonClick"
+      >
+        请帮我制定一份劳动合同?
+      </button>
+      <button
+        id="mybutton1"
+        class="transparent-button"
+        style="top: 370px; left: 430px; padding-left: 50px"
+        :class="hovered === 1 ? 'selected' : 'blur-text'"
+        @mouseover="hovered = 1"
+        @mouseout="hovered = -1"
+        @click="onButtonClick"
+      >
+        请帮我写一张元旦请假条?
+      </button>
+      <button
+        id="mybutton2"
+        class="transparent-button"
+        style="top: 456px; left: 430px; padding-left: 50px"
+        :class="hovered === 2 ? 'selected' : 'blur-text'"
+        @mouseover="hovered = 2"
+        @mouseout="hovered = -1"
+        @click="onButtonClick"
+      >
+        请帮我草拟一份律师函?
+      </button>
+      <button
+        id="mybutton3"
+        class="transparent-button"
+        style="top: 542px; left: 430px; padding-left: 50px"
+        :class="hovered === 3 ? 'selected' : 'blur-text'"
+        @mouseover="hovered = 3"
+        @mouseout="hovered = -1"
+        @click="onButtonClick"
+      >
+        请帮我写一份2024年元旦放假通知?
+      </button>
+      <button
+        id="mybutton4"
+        class="transparent-button"
+        style="top: 628px; left: 430px; padding-left: 50px"
+        :class="hovered === 4 ? 'selected' : 'blur-text'"
+        @mouseover="hovered = 4"
+        @mouseout="hovered = -1"
+        @click="onButtonClick"
+      >
+        请帮我制定一份杭州滨江区扶持AIGC生成式人工智能创新创业公司的政策?
+      </button>
+      <button
+        id="mybutton5"
+        class="transparent-button"
+        style="top: 714px; left: 430px; padding-left: 50px"
+        :class="hovered === 5 ? 'selected' : 'blur-text'"
+        @mouseover="hovered = 5"
+        @mouseout="hovered = -1"
+        @click="onButtonClick"
+      >
+        请将古诗《静夜思》的情景扩写成一篇短的英文科幻故事?
+      </button>
+    </div>
+    <div id="page2" class="page2-content" :class="isFocus ? 'is-input' : ''">
+      <input
+        id="text_get"
+        ref="text_in"
+        class="text-input"
+        style="top: 800px; left: 430px"
+        placeholder="请输入你的问题。"
+        @focus="isFocus = true"
+        @blur="test"
+      >
+      <button
+        id="text_send"
+        class="text_send_button"
+        style="top: 810px; left: 1280px;"
+        @click="onTestSendButton"
+      />
+      <button class="key_buttton" style="top: 800px; left: 1370px" @click="showKeyBoard" />
+      <div id="key_sma0" class="key_sma" style="top: 815px; left: 1412px" />
+    </div>
+  </div>
+</template>
+
 <style lang="scss" scoped>
 @import '../assets/css/my_button.css';
 .page {
@@ -240,7 +193,6 @@ export default {
     'Open Sans',
     sans-serif;
   background-image: url('../assets/public/background_1.png');
-  /* 设置背景尺�?�和重�?�方�? */
   background-size: auto;
   background-repeat: no-repeat;
 }
@@ -344,7 +296,7 @@ export default {
   //   left: 40%;
   //   /*display: none;
   //   opacity: 0;
-  //   pointer-events: none; 
+  //   pointer-events: none;
   //   transition: opacity 1s ease; */
   // }
   // #page3.visible {
@@ -352,5 +304,24 @@ export default {
   //   display: block; /* 当添加visible类时，显示page3元素 */
   //   pointer-events: auto; /* 不可选中，鼠标事件穿透 */
   // }
+}
+.is-input {
+  transform: translateY(-560px);
+  ::placeholder {
+    color: rgba(255,255,255, 0.5);
+  }
+  .text_send_button {
+    opacity: 1;
+    cursor: pointer;
+    pointer-events: all;
+  }
+  .key_sma {
+    transform: translateY(15px);
+  }
+}
+
+.is-hidden {
+  opacity: 0;
+  pointer-events: none;
 }
 </style>
