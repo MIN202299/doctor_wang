@@ -1,7 +1,17 @@
 import { createApp } from 'vue'
-import { createHead } from '@vueuse/head'
 import App from './App.vue'
 import router from './router'
 
-const head = createHead()
-createApp(App).use(router).use(head).mount('#app')
+// custom-vue-scrollbar
+import 'custom-vue-scrollbar/dist/style.css'
+
+// unocss
+import 'virtual:uno.css'
+
+// tailwind reset style
+import '@unocss/reset/tailwind.css'
+import './index.scss'
+
+createApp(App)
+  .use(router)
+  .mount('#app')

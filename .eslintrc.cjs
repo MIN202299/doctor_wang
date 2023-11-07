@@ -5,6 +5,7 @@ module.exports = {
   extends: [
     '@dcwjoy',
     '@electron-toolkit',
+    '@unocss',
   ],
   rules: {
     'vue/require-default-prop': 'off',

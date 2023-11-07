@@ -39,7 +39,7 @@ function createWindow() {
     return display.bounds.x !== 0 || display.bounds.y !== 0
   })
   const root = process.env.ELECTRON_RENDERER_URL
-  if (externalDisplay) {
+  if (externalDisplay && false) {
     otherWindow = new BrowserWindow({
       x: externalDisplay.bounds.x,
       y: externalDisplay.bounds.y,
@@ -54,25 +54,25 @@ function createWindow() {
         sandbox: false,
       },
     })
-    otherWindow.on('closed', () => {
+    otherWindow && otherWindow.on('closed', () => {
       otherWindow = null
     })
   }
-  otherWindow.on('ready-to-show', () => {
+  otherWindow && otherWindow.on('ready-to-show', () => {
     otherWindow.show()
   })
-  isDev && otherWindow.webContents.toggleDevTools()
+  ;(isDev && otherWindow) && otherWindow.webContents.toggleDevTools()
   // double screen communte
   ipcMain.on('data_get', (_, message) => {
     if (mainWindow) {
       console.log(`datais com${message}`)
-      otherWindow.webContents.send('data_is_com', message)
+      otherWindow && otherWindow.webContents.send('data_is_com', message)
     }
   })
   ipcMain.on('button_is_clicked', (_, message) => {
     if (mainWindow) {
       console.log(`is clicked ${message}`)
-      otherWindow.webContents.send('isclick', message)
+      otherWindow && otherWindow.webContents.send('isclick', message)
     }
   })
 
@@ -95,23 +95,21 @@ function createWindow() {
   // Load the remote URL for development or the local html file for production.
   if (is.dev && process.env.ELECTRON_RENDERER_URL) {
     mainWindow.loadURL(process.env.ELECTRON_RENDERER_URL)
-    otherWindow.loadURL(`${root}/#/page2`)
+    otherWindow && otherWindow.loadURL(`${root}/#/page2`)
   }
   else {
     mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
-    otherWindow.loadFile(join(__dirname, '../renderer/index.html'), {
+    otherWindow && otherWindow.loadFile(join(__dirname, '../renderer/index.html'), {
       hash: 'page2',
     })
   }
   // fix cors error
   mainWindow.webContents.session.webRequest.onBeforeSendHeaders((details, cb) => {
-    console.log('mainWindow', details)
     cb({
       requestHeaders: { Origin: '*', ...details.requestHeaders },
     })
   })
   mainWindow.webContents.session.webRequest.onHeadersReceived((details, cb) => {
-    console.log('mainWindow', details)
     cb({
       responseHeaders: {
         'Access-Control-Allow-Origin': ['*'],
