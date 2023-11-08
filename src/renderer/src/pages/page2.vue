@@ -51,7 +51,7 @@ function textAnimation(text: string) {
 <template>
   <div relative h-100vh w-100vw bg="[url(@renderer/assets/main-bg-2.png)] center cover">
     <!-- 中心圆 -->
-    <div a-center aspect-square w-200 opacity-80 bg="[url(@renderer/assets/round.png)] center contain no-repeat" />
+    <div aspect-square w-200 opacity-80 a-center bg="[url(@renderer/assets/round.png)] center contain no-repeat" />
     <!-- 左上角 -->
     <div
       absolute left-55 top-180 h-130 w-200
@@ -74,14 +74,14 @@ function textAnimation(text: string) {
       <img w="90%" mx-auto mt-15 src="@renderer/assets/02.gif" alt="">
     </div>
     <div
-      a-center z-10 h-full w-full overflow-hidden backdrop-blur-6 transition-all-300
+      z-10 h-full w-full overflow-hidden backdrop-blur-15 transition-all-300 a-center
       :class="visible ? 'opacity-100' : 'opacity-0'"
       @click="visible = !visible"
     >
       <div
         bg="[url(@renderer/assets/big_kuang.png)] center contain no-repeat"
-        :class="visible ? 'scale-100' : 'scale-120'" a-center h-58vh w-80vw px-30 py-30
-        transition-all-300
+        :class="visible ? 'scale-100' : 'scale-120'"
+        h-58vh w-80vw px-30 py-30 transition-all-300 a-center
       >
         <div ref="wrapper$" h-full w-full overflow-scroll>
           <ul text-2em>
