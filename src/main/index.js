@@ -39,7 +39,7 @@ function createWindow() {
     return display.bounds.x !== 0 || display.bounds.y !== 0
   })
   const root = process.env.ELECTRON_RENDERER_URL
-  if (externalDisplay && false) {
+  if (externalDisplay) {
     otherWindow = new BrowserWindow({
       x: externalDisplay.bounds.x,
       y: externalDisplay.bounds.y,

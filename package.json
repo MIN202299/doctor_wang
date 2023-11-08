@@ -26,6 +26,7 @@
     "custom-vue-scrollbar": "^0.0.8",
     "electron-updater": "^6.1.4",
     "jquery": "^3.7.1",
+    "pinia": "^2.1.7",
     "vue-meta": "^2.4.0",
     "vue-router": "^4.2.5"
   },

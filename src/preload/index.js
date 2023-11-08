@@ -20,7 +20,7 @@ const api = {
   closeKeyboard() {
     ipcRenderer.send('close-original-keyboard')
   },
-  // 副屏按钮点击监听
+  // 副屏按钮点击prompt监听
   onListenIsClick(cb) {
     ipcRenderer.on('isclick', cb)
   },
