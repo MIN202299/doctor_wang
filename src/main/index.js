@@ -2,7 +2,7 @@ import path, { join } from 'node:path'
 import process from 'node:process'
 import childProcess from 'node:child_process'
 import { BrowserWindow, app, ipcMain, screen, shell } from 'electron'
-import { electronApp, is, optimizer } from '@electron-toolkit/utils'
+import { electronApp, optimizer } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 
 const isDev = process.env.NODE_ENV === 'development'
@@ -93,7 +93,7 @@ function createWindow() {
 
   // HMR for renderer base on electron-vite cli.
   // Load the remote URL for development or the local html file for production.
-  if (is.dev && process.env.ELECTRON_RENDERER_URL) {
+  if (isDev && process.env.ELECTRON_RENDERER_URL) {
     mainWindow.loadURL(process.env.ELECTRON_RENDERER_URL)
     otherWindow && otherWindow.loadURL(`${root}/#/page2`)
   }
